@@ -8,7 +8,7 @@ Given a sequence of observations whose distribution changes at some unknown chan
 
 #### Mathematical Formulation
 
-Let $\{X_n\}$ be a sequence of independent random variables, and let $\nu$ be a change-point. Assume that $X_1, \dots, X_{\nu-1}$ all have density $p_0$ and that $X_\nu, X_{\nu+1}, \dots$ have densities $p_1$. Let $P_\nu$ denote the probability measure on the entire sequence of observations when the change-point is at $\nu$, and $E_\nu$ the corresponding expectation. The change-point $\nu$ is assumed to be unknown but deterministic.
+Let $(X_n)$ be a sequence of independent random variables, and let $\nu$ be a change-point. Assume that $X_1, \dots, X_{\nu-1}$ all have density $p_0$ and that $X_\nu, X_{\nu+1}, \dots$ have densities $p_1$. Let $P_\nu$ denote the probability measure on the entire sequence of observations when the change-point is at $\nu$, and $E_\nu$ the corresponding expectation. The change-point $\nu$ is assumed to be unknown but deterministic.
 
 Let $\tau$ be a stopping time, i.e., $\tau$ is the time at which we stop taking observations and declare that the change has occurred. Lorden (1971) proposed solving the following optimization problem to find the best stopping time:
 
