@@ -13,7 +13,7 @@ Data source: Rearc. AWS Marketplace: Coronavirus (COVID-19) Data in the United S
 #### Non-stationary Distribution Model
 
 We use the Beta distribution $\mathcal{B}$ to model daily new cases.
-* Pre-change: $\mathcal{B}(a_0, b_0)$, assuming $a_0 << b_0$
+* Pre-change: $\mathcal{B}(a_0, b_0)$, assuming $a_0 \ll b_0$
 * Post-change: $\mathcal{B}(a_0 h_\theta(n-\nu), b_0)$
 where $\nu$ is the change point (deterministic yet unknown) and
 $$h_\theta(x) = 1+\frac{10^{\theta_0}}{\theta_2} \exp\left(-\frac{(x-\theta_1)^2}{2 \theta_2^2} \right)$$
