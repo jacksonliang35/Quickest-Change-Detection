@@ -1,0 +1,165 @@
+import numpy as np
+from scipy import stats
+# from expon_cusum import Lv,F1
+# import matplotlib.pyplot as plt
+
+### This script is used to compare the thresholds for CuSum & WL-Cusum
+
+## From first commit
+class F1(object):
+    def __init__(self,c,mu_1=1,sig_1=1):
+        self.c = c
+        self.mu_1 = mu_1
+        self.dist = stats.norm(0,sig_1)
+    def pdf(self,y,nu,t):
+        # Require: t > nu
+        assert(not isinstance(y,np.ndarray))
+        return self.dist.pdf(y-self.mu_1*np.exp(self.c*(t-nu)))
+    def logpdf(self,y,nu,t):
+        # Require: t > nu
+        assert(not isinstance(y,np.ndarray))
+        return self.dist.logpdf(y-self.mu_1*np.exp(self.c*(t-nu)))
+    def rvs(self,size,nu,t):
+        # Require: t > nu
+        return self.dist.rvs(size=size) + self.mu_1*np.exp(self.c*(np.arange(t,t+size)-nu))
+    def logpdf_arr(self,y):
+        assert(isinstance(y,np.ndarray))
+        ind = np.arange(float(len(y)))
+        return np.sum(self.dist.logpdf(y-self.mu_1*np.exp(self.c*ind)))
+def gfun(y,fc,f0):
+    llr = np.zeros(len(y))
+    for k in range(len(y)):
+        llr[k] = fc.logpdf_arr(y[k:]) - np.sum(f0.logpdf(y[k:]))
+    # print(llr)
+    return (np.argmax(llr),np.amax(llr))
+def Lv(y, f0, c, t):
+    max_k, max_llr = gfun(y,F1(c,mu_1=f0.mean(),sig_1=np.sqrt(f0.var())),f0)
+    # print(t,max_k)
+    return max_llr
+
+c = 0.4
+f0 = stats.norm(0.1,100)
+# f1 = F1(c,mu_1=f0.mean(),sig_1=np.sqrt(f0.var()))
+
+
+b_1 = np.exp(np.linspace(np.log(.75),np.log(1.05),5))
+b_2 = np.exp(np.linspace(np.log(.22),np.log(.32),5))
+b_3 = np.exp(np.linspace(np.log(2),np.log(4.8),5))
+
+N = 10000
+
+mtfa_1 = np.zeros(len(b_1))
+mtfa_2 = np.zeros(len(b_2))
+mtfa_3 = np.zeros(len(b_3))
+# add_1 = np.zeros(len(b_1))
+# add_2 = np.zeros(len(b_2))
+# add_3 = np.zeros(len(b_3))
+W_1 = 25
+W_2 = 50
+
+for j in range(N):
+    for i in range(len(b_1)):
+        t = W_1
+        y = f0.rvs(size=2000)
+        while True:
+            try:
+                y[t]
+            except IndexError:
+                y = np.append(y,f0.rvs(size=2000))
+            v_1 = Lv(y[max(1,t-W_1+1):t+1], f0, c, t)
+            if (v_1 > b_1[i]):
+                mtfa_1[i] = mtfa_1[i] + t - W_1 + 1
+                break
+            t = t + 1
+        # print(mtfa_1[i])
+
+    for i in range(len(b_2)):
+        t = W_2
+        y = f0.rvs(size=2000)
+        while True:
+            try:
+                y[t]
+            except IndexError:
+                y = np.append(y,f0.rvs(size=2000))
+            v_2 = Lv(y[max(1,t-W_2+1):t+1], f0, c, t)
+            if (v_2 > b_2[i]):
+                mtfa_2[i] = mtfa_2[i] + t - W_2 + 1
+                break
+            t = t + 1
+        # print(mtfa_2[i])
+
+    # No WL
+    for i in range(len(b_3)):
+        t = 0
+        y = f0.rvs(size=2000)
+        while True:
+            try:
+                y[t]
+            except IndexError:
+                y = np.append(y,f0.rvs(size=2000))
+            v_3 = Lv(y[:t+1], f0, c, t)
+            if (v_3 > b_3[i]):
+                mtfa_3[i] = mtfa_3[i] + t + 1
+                break
+            t = t + 1
+
+    # for i in range(len(b_1)):
+    #     t = W_1
+    #     y = f0.rvs(size=W_1)
+    #     while True:
+    #         try:
+    #             y[t]
+    #         except IndexError:
+    #             y = np.append(y,f1.rvs(size=W_1,nu=W_1-1,t=t))
+    #         v_1 = Lv(y[max(1,t-W_1+1):t+1], f0, c, t)
+    #         if (v_1 > b_1[i]):
+    #             add_1[i] = add_1[i] + t - W_1 + 1
+    #             break
+    #         t = t + 1
+    #
+    # for i in range(len(b_2)):
+    #     t = W_2
+    #     y = f0.rvs(size=W_2)
+    #     while True:
+    #         try:
+    #             y[t]
+    #         except IndexError:
+    #             y = np.append(y,f1.rvs(size=W_2,nu=W_2-1,t=t))
+    #         v_2 = Lv(y[max(1,t-W_2+1):t+1], f0, c, t)
+    #         if (v_2 > b_2[i]):
+    #             add_2[i] = add_2[i] + t - W_2 + 1
+    #             break
+    #         t = t + 1
+    #
+    # for i in range(len(b_3)):
+    #     t = W_3
+    #     y = f0.rvs(size=W_3)
+    #     while True:
+    #         try:
+    #             y[t]
+    #         except IndexError:
+    #             y = np.append(y,f1.rvs(size=W_3,nu=W_3-1,t=t))
+    #         v_3 = Lv(y[max(1,t-W_3+1):t+1], f0, c, t)
+    #         if (v_3 > b_3[i]):
+    #             add_3[i] = add_3[i] + t - W_3 + 1
+    #             break
+    #         t = t + 1
+
+    if j % 10 == 9:
+        print("Num of Iterations:", (j+1))
+        print("mtfa_1:", mtfa_1 / (j+1))
+        print("mtfa_2:", mtfa_2 / (j+1))
+        print("mtfa_3:", mtfa_3 / (j+1))
+        print("add_1:", add_1 / (j+1))
+        print("add_2:", add_2 / (j+1))
+        print("add_3:", add_3 / (j+1))
+        # with open('./icp_cusum_t1.npy', 'wb') as f:
+        #     np.save(f, mtfa_1 / (j+1))
+        #     np.save(f, mtfa_2 / (j+1))
+        #     np.save(f, mtfa_3 / (j+1))
+        #     np.save(f, add_1 / (j+1))
+        #     np.save(f, add_2 / (j+1))
+        #     np.save(f, add_3 / (j+1))
+
+
+###
