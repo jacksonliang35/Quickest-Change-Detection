@@ -8,21 +8,17 @@ Given a sequence of observations whose distribution changes at some unknown chan
 
 #### Mathematical Formulation
 
-Let $\{X_n\}$ be a sequence of independent random variables, and let $\nu$ be a change-point. Assume that $X_1, \dots, X_{\nu-1}$ all have density $p_0$ and that $X_\nu, X_{\nu+1}, \dots$ have densities $p_1$ with respect to $\mu$. Let $\mathbb{P}_{\nu}$ denote the probability measure on the entire sequence of observations when the change-point is at $\nu$, and $\mathbb{E}_\nu$ the corresponding expectation. The change-point $\nu$ is assumed to be unknown but deterministic.
+Let $\{X_n\}$ be a sequence of independent random variables, and let $\nu$ be a change-point. Assume that $X_1, \dots, X_{\nu-1}$ all have density $p_0$ and that $X_\nu, X_{\nu+1}, \dots$ have densities $p_1$. Let $P_\nu$ denote the probability measure on the entire sequence of observations when the change-point is at $\nu$, and $E_\nu$ the corresponding expectation. The change-point $\nu$ is assumed to be unknown but deterministic.
 
 Let $\tau$ be a stopping time, i.e., $\tau$ is the time at which we stop taking observations and declare that the change has occurred. Lorden (1971) proposed solving the following optimization problem to find the best stopping time:
 
-$$\inf_{\tau \in \mathcal{C}_\alpha} \texttt{WADD}(\tau)$$
+$$\inf_{\tau: E_\infty[\tau] \geq \alpha^{-1} } \texttt{WADD}(\tau)$$
 
 where the worst-case delay is
 
-$$\texttt{WADD}(\tau) := \sup_{\nu \geq 1} \text{ess\,sup} \mathbb{E}_\nu \left[(\tau-\nu+1)^+ |{\cal F}_{\nu-1}\right]$$
+$$\texttt{WADD}(\tau) := \sup_{\nu \geq 1} \texttt{esssup} E_\nu [(\tau-\nu+1)^+ |X_1,\dots,X_{\nu-1}]$$
 
-and the constraint set is
-
-$$\mathcal{C}_\alpha := \left\{ \tau: \mathbb{E}_\infty \geq \alpha^{-1} \right\}$$
-
-which guarantees that the false alarm rate of the algorithm does not exceed $\alpha$. Here $\mathbb{E}_\infty$ is the expectation operator when the change never happens.
+and the constraint set guarantees that the false alarm rate of the algorithm does not exceed $\alpha$. $E_\infty$ is the expectation operator when the change never happens.
 
 See [here](https://arxiv.org/pdf/1210.5552.pdf) for an overview.
 
