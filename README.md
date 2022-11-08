@@ -1,1 +1,8 @@
 # Quickest-Change-Detection
+
+
+### [Non-Parametric Quickest Mean Change Detection](./MCT)
+
+#### Abstract
+
+The problem of quickest detection of a change in the mean of a sequence of independent observations is studied. The pre-change distribution is assumed to be stationary, while the post-change distributions are allowed to be non-stationary. The case where the pre-change distribution is known is studied first, and then the extension where only the mean and variance of the pre-change distribution are known. No knowledge of the post-change distributions is assumed other than that their means are above some pre- specified threshold larger than the pre-change mean. For the case where the pre-change distribution is known, a test is derived that asymptotically minimizes the worst-case detection delay over all possible post-change distributions, as the false alarm rate goes to zero. Towards deriving this asymptotically optimal test, some new results are provided for the general problem of asymptotic minimax robust quickest change detection in non-stationary settings. Then, the limiting form of the optimal test is studied as the gap between the pre- and post-change means goes to zero, called the Mean-Change Test (MCT). It is shown that the MCT can be designed with only knowledge of the mean and variance of the pre-change distribution. The performance of the MCT is also characterized when the mean gap is moderate, under the additional assumption that the distributions of the observations have bounded support. The analysis is validated through numerical results for detecting a change in the mean of a beta distribution. The use of the MCT in monitoring pandemics is also demonstrated.
