@@ -1,36 +1,39 @@
 # Quickest-Change-Detection
 
-### Problem Definition
+### General Problem Introduction
 
-#### Intuition
-Given a sequence of observations whose distribution changes at some unknown change point, the goal is to detect the change in distribution as quickly as possible after it occurs, while not making too many false alarms.
+#### Goal
 
+Given sequential observations whose distribution (possibly) changes at some time, the goal is to detect the change in distribution as quickly as possible after it occurs, while not making too many false alarms.
 
-#### Mathematical Formulation
+#### QCD as Optimization
 
-Let $(X_n)$ be a sequence of independent random variables, and let $\nu$ be a change-point. Assume that $X_1, \dots, X_{\nu-1}$ all have density $p_0$ and that $X_\nu, X_{\nu+1}, \dots$ have densities $p_1$. Let $P_\nu$ denote the probability measure on the entire sequence of observations when the change-point is at $\nu$, and $E_\nu$ the corresponding expectation. The change-point $\nu$ is assumed to be unknown but deterministic.
+We are given sequential input at each time, denoted as $(X_n)$, each distributed as some pre-change density $p_0$ (nominal distribution). At some unknown time $\nu$ (a.k.a. change-point), the underlying distribution of each $X_\nu, X_{\nu+1}, \dots$ suddenly changes to $p_1$ (anomalous distribution).
 
-Let $\tau$ be a stopping time, i.e., $\tau$ is the time at which we stop taking observations and declare that the change has occurred. Lorden (1971) proposed solving the following optimization problem to find the best stopping time:
+We want to design a change detector which monitors the sequence. The goal is to design a good stopping time $\tau$, at which we stop taking observations and declare that the change has occurred.
 
-$$\inf_{\tau: E_\infty[\tau] \geq \alpha^{-1} } \texttt{WADD}(\tau)$$
+What characterizes a good stopping time? A traditional criterion is to solve the following optimization problem [1] (Lorden, 1971). Given that the false alarm rate does not exceed $\alpha$, we want to minimize the expected delay before making an alarm. Mathematically, given that
 
-where the worst-case delay is
+$$E_\infty[\tau] \geq \alpha^{-1},$$
 
-$$\texttt{WADD}(\tau) := \sup_{\nu \geq 1} \texttt{esssup} E_\nu [(\tau-\nu+1)^+ |X_1,\dots,X_{\nu-1}]$$
+one aims to minimize the delay, defined as
 
-and the constraint set guarantees that the false alarm rate of the algorithm does not exceed $\alpha$. $E_\infty$ is the expectation operator when the change never happens.
+$$\texttt{WADD}(\tau) := \sup_{\nu \geq 1} \texttt{esssup} E_\nu [(\tau-\nu+1)^+ | X_1,\dots,X_{\nu-1}].$$
 
-See [here](https://arxiv.org/pdf/1210.5552.pdf) for an overview.
+Note that $E_\infty$ is the expectation operator when the change never happens.
 
-### [Non-Parametric Quickest Mean Change Detection](./MCT)
+### Why Sequential Algorithms?
 
-#### Abstract
+One common way to perform change detection is to first collect some of the most recent samples and perform fixed-sample-size (FSS) hypothesis testing at each time. However, it has been shown theoretically that FSS tests on average require more samples than do sequential tests [2]. This is also illustrated in the following figure.
 
-The problem of quickest detection of a change in the mean of a sequence of independent observations is studied. The pre-change distribution is assumed to be stationary, while the post-change distributions are allowed to be non-stationary. The case where the pre-change distribution is known is studied first, and then the extension where only the mean and variance of the pre-change distribution are known. No knowledge of the post-change distributions is assumed other than that their means are above some pre- specified threshold larger than the pre-change mean. For the case where the pre-change distribution is known, a test is derived that asymptotically minimizes the worst-case detection delay over all possible post-change distributions, as the false alarm rate goes to zero. Towards deriving this asymptotically optimal test, some new results are provided for the general problem of asymptotic minimax robust quickest change detection in non-stationary settings. Then, the limiting form of the optimal test is studied as the gap between the pre- and post-change means goes to zero, called the Mean-Change Test (MCT). It is shown that the MCT can be designed with only knowledge of the mean and variance of the pre-change distribution. The performance of the MCT is also characterized when the mean gap is moderate, under the additional assumption that the distributions of the observations have bounded support. The analysis is validated through numerical results for detecting a change in the mean of a beta distribution. The use of the MCT in monitoring pandemics is also demonstrated.
+![Comparison of the (sequential) Mean-Change Test (MCT) and the (FSS) Scan Statistics Test (SST)](scan.png)
 
+It can be observed that at the same false alarm level, the SST requires much more samples than the MCT.
 
-### [Quickest Change Detection with Non-Stationary Post-Change Observations](./Non-Stationary)
+### Some Applications
 
-#### Abstract
+* [Pandemic Monitoring](Pandemic-Monitoring/)
+* [Passing Object Detection](IoBT/)
 
-The problem of quickest detection of a change in the distribution of a sequence of independent observations is considered. The pre-change observations are assumed to be stationary with a known distribution, while the post-change observations are allowed to be non-stationary with some possible parametric uncertainty in their distribution. In particular, it is assumed that the cumulative Kullback-Leibler divergence between the post-change and the pre-change distributions grows in a certain manner with time after the change-point. For the case where the post-change distributions are known, a universal asymptotic lower bound on the delay is derived, as the false alarm rate goes to zero. Furthermore, a window-limited Cumulative Sum (CuSum) procedure is developed, and shown to achieve the lower bound asymptotically. For the case where the post-change distributions have parametric uncertainty, a window-limited (WL) generalized likelihood-ratio (GLR) CuSum procedure is developed and is shown to achieve the universal lower bound asymptotically. Extensions to the case with dependent observations are discussed. The analysis is validated through numerical results on synthetic data. The use of the WL-GLR-CuSum procedure in monitoring pandemics is also demonstrated.
+[1] G. Lorden, "Procedures for reacting to a change in distribution," The Annals of Mathematical Statistics, vol. 42, no. 6, pp. 1897–1908, Dec. 1971.
+[2] P. Moulin and V. V. Veeravalli, Statistical Inference for Engineers and Data Scientists. Cambridge, UK: Cambridge University Press, 2018.
