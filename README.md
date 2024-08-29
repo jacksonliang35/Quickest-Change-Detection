@@ -36,4 +36,5 @@ It can be observed that at the same false alarm level, the SST requires much mor
 * [Passing Object Detection](IoBT/)
 
 [1] G. Lorden, "Procedures for reacting to a change in distribution," The Annals of Mathematical Statistics, vol. 42, no. 6, pp. 1897–1908, Dec. 1971.
+
 [2] P. Moulin and V. V. Veeravalli, Statistical Inference for Engineers and Data Scientists. Cambridge, UK: Cambridge University Press, 2018.
